@@ -1,0 +1,4 @@
+pytest-django==4.5.2
+pytest==7.2.0
+
+-r local.txt
