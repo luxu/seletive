@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     #Lib
     'django_extensions',
@@ -26,12 +27,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "seletive.urls"
@@ -57,7 +58,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "seletive.wsgi.application"
 
-if DEBUG:
+if DATABASES_LOCAL := config("DATABASES_LOCAL"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -65,9 +66,8 @@ if DEBUG:
         }
     }
 else:
-    DATABASE_URL = config("DATABASE_URL")
     DATABASES = {
-        "default": dj_database_url.config(default=DATABASE_URL, conn_max_age=1800),
+        "default": dj_database_url.config(default=config("DATABASE_URL"), conn_max_age=1800),
     }
 
 
@@ -94,6 +94,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
 STATIC_ROOT = os.path.join('static')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
