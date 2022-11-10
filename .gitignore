@@ -3,10 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 .idea
-static/
-media/*.jpg
 # C extensions
 *.so
+staticfiles/
 
 # Distribution / packaging
 .Python
