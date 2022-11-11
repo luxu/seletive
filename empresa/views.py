@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.messages import constants
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from empresa.models import Tecnologias, Empresa
 
 
 def nova_empresa(request):
+    template_name = 'empresa/nova_empresa.html'
     if request.method == "GET":
         techs = Tecnologias.objects.all()
         context = {
@@ -47,15 +48,25 @@ def nova_empresa(request):
         empresa.save()
         messages.add_message(request, constants.SUCCESS, 'Empresa cadastrada com sucesso')
         return redirect('/home/nova_empresa')
-    template_name = 'empresa/nova_empresa.html'
     return render(request, template_name, context)
 
 
 def empresas(request):
-    template_name = 'empresa/empresa.html'
+    technologias_filtrar = request.GET.get('tecnologias')
+    nome_filtar = request.GET.get('nome')
     empresas = Empresa.objects.all()
+
+    if technologias_filtrar:
+        empresas = empresas.filter(tecnologias=technologias_filtrar)
+
+    if nome_filtar:
+        empresas = empresas.filter(nome__icontains=nome_filtar)
+
+    template_name = 'empresa/empresa.html'
+    tecnologias = Tecnologias.objects.all()
     context = {
-        'empresas': empresas
+        'empresas': empresas,
+        'tecnologias': tecnologias
     }
     return render(request, template_name, context)
 
@@ -65,3 +76,12 @@ def excluir_empresa(request, id):
     empresa.delete()
     messages.add_message(request, constants.SUCCESS, 'Empresa deletada com sucesso')
     return redirect('/home/empresas')
+
+
+def empresa(request, id):
+    empresa_unica = get_object_or_404(Empresa, id=id)
+    template_name = 'empresa/empresa_unica.html'
+    context = {
+        'empresa': empresa_unica
+    }
+    return render(request, template_name, context)
