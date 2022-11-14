@@ -70,9 +70,14 @@ class Vagas(models.Model):
     titulo = models.CharField(max_length=30)
     nivel_experiencia = models.CharField(max_length=2, choices=choices_experiencia)
     data_final = models.DateField()
+    email = models.EmailField(null=True)
     status = models.CharField(max_length=30, choices=choices_status)
     tecnologias_dominadas = models.ManyToManyField(Tecnologias)
     tecnologias_estudar = models.ManyToManyField(Tecnologias, related_name='estudar')
+
+    def progresso(self):
+        x = [((i + 1) * 20, j[0]) for i, j in enumerate(self.choices_status)]
+        return list(filter(lambda x: x[1] == self.status, x))[0][0]
 
     def __str__(self):
         return self.titulo

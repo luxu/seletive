@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.messages import constants
 from django.shortcuts import render, redirect, get_object_or_404
 
-from empresa.models import Tecnologias, Empresa
+from empresa.models import Tecnologias, Empresa, Vagas
 
 
 def nova_empresa(request):
@@ -79,9 +79,15 @@ def excluir_empresa(request, id):
 
 
 def empresa(request, id):
-    empresa_unica = get_object_or_404(Empresa, id=id)
     template_name = 'empresa/empresa_unica.html'
+    empresa_unica = get_object_or_404(Empresa, id=id)
+    empresas = Empresa.objects.all()
+    tecnologias = Tecnologias.objects.all()
+    vagas = Vagas.objects.filter(empresa_id=id)
     context = {
-        'empresa': empresa_unica
+        'empresa': empresa_unica,
+        'tecnologias': tecnologias,
+        'empresas': empresas,
+        'vagas': vagas
     }
     return render(request, template_name, context)
